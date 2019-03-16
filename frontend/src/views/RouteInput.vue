@@ -88,7 +88,7 @@
 <style scoped lang="scss">
 
 .routeinput {
-  background: #e3e3e3;
+  background-image: linear-gradient(135deg,#7753eb,#4264fb);
 }
 
 h1, .link {

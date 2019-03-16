@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="routeview" fill-height>
     <!-- {{ $route.params }} -->
-    <v-layout row wrap v-if="routeObject" justify-center>
+    <v-layout row wrap v-if="routeObject" justify-center style="overflow:hidden;">
       <v-flex xs12 sm6 justify-center>
         <v-radio-group v-model="selectedRoute" row class="routeSelector">
           <v-radio :label=" 'Route ' + (index+1) " :value="index" 

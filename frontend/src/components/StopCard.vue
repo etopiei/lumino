@@ -10,7 +10,7 @@
 					<v-list-tile-title class="stoptitle">{{ stop.name }} </v-list-tile-title>
 				</v-list-tile-content>
 
-				<v-list-tile-avatar class="score low">
+				<v-list-tile-avatar class="score" v-bind:class="{ low: stop.safety.index < 40, high: stop.safety.index > 60 }">
 					{{ stop.safety.index }}
 				</v-list-tile-avatar>
 			</v-list-tile>
