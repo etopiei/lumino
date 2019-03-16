@@ -56,6 +56,15 @@ function get_station_metadata(station_id) {
 	});
 }
 
+function get_crime_level(stop_id) {
+	return sequelize.query('SELECT crime_level(?)', {replacements: [stop_id]}).then(results => {
+		return results[0][0];
+	}).catch(err => {
+		console.log(err);
+		return null;
+	});
+}
+
 function get_safety_index(stop_id) {
 	const p = [];
 	p.push(get_station_metadata(stop_id));
@@ -77,6 +86,17 @@ function get_walking_index(fromLat, fromLon, toLat, toLon) {
 		"meta": null
 	};
 }
+
+app.get('/crime', (req, res) => {
+	const stop = req.query.stopid;
+	get_crime_level(stop).then(crime_text => {
+		if (crime_text !== null) {
+			res.send(crime_text);
+		} else {
+			res.status(404).send("Could not find crime data from this stop id");
+		}
+	});
+});
 
 app.get('/safety', (req, res) => {
 	const stop = req.query.stopid;
