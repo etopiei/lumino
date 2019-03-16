@@ -13,7 +13,7 @@
     </v-toolbar>
 
     <v-content>
-      <RouteInput/>
+      <router-view/>
     </v-content>
 
   </v-app>
@@ -36,12 +36,11 @@
 </style>
 
 <script>
-import RouteInput from './views/RouteInput.vue'
 
 export default {
   name: 'App',
   components: {
-    RouteInput
+    
   },
   data () {
     return {
