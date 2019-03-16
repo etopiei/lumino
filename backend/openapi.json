@@ -100,6 +100,36 @@
                     }
                 }
             }
+        },
+        "/crime": {
+            "get": {
+                "summary": "Get information about the crime levels for a particular PTV stop.",
+                "description": "This will fetch the crime information about an area where a PTV stop is.",
+                "parameters": [
+                    {
+                        "name": "stopid",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "This is the ID of a stop on the PTV network to get the safety information about."
+                    }
+                ],
+                "operationId": "",
+                "responses": {
+                    "200": {
+                        "description": "An example response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "crime_level": "low|medium|high"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
