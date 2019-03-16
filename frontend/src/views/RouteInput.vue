@@ -183,7 +183,7 @@ export default {
         this.startPlaces = response.data.features.map( poi => {
           return {
             text: poi["place_name"],
-            coords: poi["center"]
+            coords: poi["center"].reverse()
           }
         })
         this.startLoading = false;
@@ -198,7 +198,7 @@ export default {
         this.destinationPlaces = response.data.features.map( poi => {
           return {
             text: poi["place_name"],
-            coords: poi["center"]
+            coords: poi["center"].reverse()
           }
         })
         this.destinationLoading = false;
