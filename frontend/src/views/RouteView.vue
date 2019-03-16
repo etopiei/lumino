@@ -15,7 +15,7 @@
 <style scoped lang="scss">
 
 .routeview {
-  background: #e3e3e3;
+  // background: #f5f5f5;
 }
 
 </style>
@@ -66,7 +66,7 @@ export default {
 
     axios.post('http://10.77.3.7:3000/route', requestBody)
     .then( response => {
-      console.log(response)
+      this.routeObject = response;
     })
   }
 
