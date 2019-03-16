@@ -1,9 +1,13 @@
 <template>
   <v-container fluid class="routeview" fill-height>
     <!-- {{ $route.params }} -->
-    <v-layout row wrap>
-      <v-flex xs12 sm6>
-        <RouteDetails v-if="!!routeObject" v-bind:routeObject="routeObject"/>
+    <v-layout row wrap v-if="routeObject" justify-center>
+      <v-flex xs12 sm6 justify-center>
+        <v-radio-group v-model="selectedRoute" row class="routeSelector">
+          <v-radio :label=" 'Route ' + (index+1) " :value="index" 
+            v-for="(_, index) in routeObject.routes"></v-radio>
+        </v-radio-group>
+        <RouteDetails v-if="!!routeObject" v-bind:routeObject="routeObject" ref="routeDetails"/>
       </v-flex>
       <v-flex xs12 sm6 v-bind:style="{ order: $vuetify.breakpoint.smAndUp ? 1 : -1 }">
         <MapView v-bind:routeObject="routeObject"/>
@@ -18,6 +22,10 @@
   // background: #f5f5f5;
   padding: 0px;
   background:white;
+}
+
+.routeSelector {
+  padding-left: 20px;
 }
 
 </style>
@@ -40,7 +48,8 @@ export default {
   },
   data () {
     return {
-      routeObject: null
+      routeObject: null,
+      selectedRoute: 0
     }
   },
   computed: {
@@ -52,7 +61,9 @@ export default {
     }
   },
   watch: {
-    
+    selectedRoute(val) {
+      this.$refs.routeDetails.updateSelection(val);
+    }
   },
   created() {
     const requestBody = {
@@ -69,7 +80,7 @@ export default {
    
     axios.post('http://10.77.3.7:3000/route', requestBody)
     .then( response => {
-        this.routeObject = response.data
+        this.routeObject = response.data;
         console.log("Retrieved routeObject")
     })
     .catch( error => {
