@@ -2,9 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./openapi.json');
-//const fs = require('fs');
 const fetch = require('node-fetch');
-//const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const Sequelize = require('sequelize');
@@ -25,30 +23,6 @@ var options = {
 	customCss: '.swagger-ui .topbar { display: none }'
 };
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
-
-/*
-function get_station_metadata(station_id) {
-	// here fetch metadata from station file
-	filePath = path.join(__dirname, `/../data/output/stop-data-${station_id}.json`);
-	try {
-		fileData = fs.readFileSync(filePath, { encoding: 'utf-8'});
-		const file_data = JSON.parse(fileData);
-		return {
-			"cctv": file_data["amenities"]["cctv"],
-			"toilet": file_data["amenities"]["toilet"],
-			"pay_phone": file_data["amenities"]["pay_phone"],
-			"indoor_waiting_area": file_data["amenities"]["indoor_waiting_area"],
-			"sheltered_waiting_area": file_data["amenities"]["sheltered_waiting_area"],
-			"taxi_rank": file_data["amenities"]["taxi_rank"],
-			"lighting": file_data["accessibility"]["lighting"],
-			"phone": file_data["contact"]["phone"]
-		};
-	} catch (_) {
-		console.log("Error reading file");
-		return {};
-	}
-}
-*/
 
 function get_station_metadata(station_id) {
 	const p = [];
@@ -122,7 +96,8 @@ app.post('/route', async (req, res) => {
 	const params = {"method": "GET", "headers": {
 		"Accept": "application/json"
 	}};
-	fetch(`http://${process.env.ROUTE_API}/otp/routers/default/plan?fromPlace=${fromLat},${fromLon}&toPlace=${toLat},${toLon}&mode=TRANSIT,WALK&maxWalkDistance=500&arriveBy=false`, params).then(data => data.json()).then(response => {
+
+	fetch(`http://${process.env.ROUTE_API}/otp/routers/default/plan?fromPlace=${fromLat},${fromLon}&toPlace=${toLat},${toLon}&mode=TRANSIT,WALK&maxWalkDistance=1500&arriveBy=false`, params).then(data => data.json()).then(response => {
 		const routes = response["plan"]["itineraries"];
 		const promises_waiting = [];
 		routes.forEach(route => {
@@ -140,12 +115,17 @@ app.post('/route', async (req, res) => {
 			});
 		});
 		Promise.all(promises_waiting).then(resolved => {
-			res.json({"routes": routes, "safety": resolved});
-		}).catch(err => {
-			// If this happens, make sure the route is still sent
-			console.log(err);
-			res.json({"routes": routes, "safety": null});
+			let counter = 0;
+			for(let i = 0; i < routes.length; i++) {
+				for(let j = 0; j < routes[i]["legs"].length; j++) {
+					routes[i]["legs"][j]["safety"] = resolved[counter++];
+				}
+			}
+		}).catch(_ => {
+			console.log("Failed to add safety data to route");
+			res.json({"routes": routes});
 		});
+		res.json({"routes": routes});
 	}).catch(err => {
 		console.log(err);
 		res.status(500).send(`Failed to get route data, or no route options: ${JSON.stringify(err)}`);
