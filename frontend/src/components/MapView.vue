@@ -17,21 +17,9 @@
 
   const polyline = require('@mapbox/polyline');
 
-  function arraysEqual(arr1, arr2) {
-      if(arr1.length !== arr2.length)
-          return false;
-      for(var i = arr1.length; i--;) {
-          if(arr1[i] !== arr2[i])
-              return false;
-      }
-
-      return true;
-  }
-
   // This function draws a route
   function drawRoute(latlongArray, colour, featureGroup){
-    console.log(latlongArray)
-    var polyline_options = {color: colour};
+    var polyline_options = {color: colour, weight: 5};
     var polyline = L.polyline(latlongArray, polyline_options).addTo(featureGroup).on('click', (e) => {
       console.log("Clicked", this);
     }, featureGroup);
@@ -39,48 +27,42 @@
 
 // This function clears the routes
 function clearRoutes(featureGroup){
-    featureGroup.clearLayers()
-  }
+  featureGroup.clearLayers()
+}
+
+function make_everything_happen(route, map) {
+  map.setView([-37.818437, 144.967198], 13)
+  .addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/streets-v11'));
+  let selected = true;
+  let old_total = null;
+  let first = true;
+  var featureGroup = L.featureGroup().addTo(map);
+  let total = 0;
+  let points = [];
+  route.legs.forEach(leg => {
+    const extra_points = polyline.decode(leg.legGeometry.points);
+    points = points.concat(extra_points);
+    drawRoute(points, 'red', featureGroup);
+  });
+}
 
   export default {
     name: 'mapview',
     props: [ 'routeObject' ],
     data () {
       return {
-
+        map: null
       }
     },
+    update_data(selected) {
+      make_everything_happen(this.routeObject.routes[selected], this.map)
+    },
     mounted() {
-
       // This function is called once the component is ready
       // Set up map, draw etc
-
-      // route details stored in this.routeObject
-
-      console.log("Loading map with route:", this.routeObject.data.routes, this.map)
-
       this.map = L.mapbox.map('map');
-      this.map.setView([-37.818437, 144.967198], 13)
-      .addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/streets-v11'));
-
-      let selected = true;
-      let other_routes = [];
-      let first = true;
-      var featureGroup = L.featureGroup().addTo(this.map);
-      this.routeObject.data.routes.forEach(route => {
-        let points = [];
-        let colour = "#c2c2c2";
-        route.legs.forEach(leg => {
-          points = points.concat(polyline.decode(leg.legGeometry.points));
-          if (selected) {
-            colour = 'red';
-            selected = false;
-          }
-          });
-          drawRoute(points, colour, featureGroup);
-      });
-
-    // clearRoutes(featureGroup);
+      console.log("Loading map with route:", this.routeObject.data, this.map)
+      make_everything_happen(this.routeObject.data.routes[0], this.map);
   }
   }
 </script>
