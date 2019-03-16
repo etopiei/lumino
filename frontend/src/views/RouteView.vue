@@ -10,7 +10,7 @@
         <RouteDetails v-if="!!routeObject" v-bind:routeObject="routeObject" ref="routeDetails"/>
       </v-flex>
       <v-flex xs12 sm6 v-bind:style="{ order: $vuetify.breakpoint.smAndUp ? 1 : -1 }">
-        <MapView v-bind:routeObject="routeObject"/>
+        <MapView v-bind:routeObject="routeObject" ref="mapView" />
       </v-flex>
     </v-layout>
   </v-container>
@@ -63,6 +63,7 @@ export default {
   watch: {
     selectedRoute(val) {
       this.$refs.routeDetails.updateSelection(val);
+      this.$refs.mapView.update_data(val);
     }
   },
   created() {

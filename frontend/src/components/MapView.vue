@@ -54,8 +54,10 @@ function make_everything_happen(route, map) {
         map: null
       }
     },
-    update_data(selected) {
-      make_everything_happen(this.routeObject.routes[selected], this.map)
+    methods: {
+      update_data(selected) {
+        make_everything_happen(this.routeObject.routes[selected], this.map)
+      },
     },
     mounted() {
       // This function is called once the component is ready
