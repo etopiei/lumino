@@ -38,7 +38,7 @@ function get_station_metadata(station_id) {
 				"sheltered_waiting_area": row_data["sheltered_waiting_area"],
 				"taxi_rank": row_data["taxi_rank"],
 				"lighting": row_data["lighting"],
-				"phone": row_data["phone"],
+				"phone": row_data["telephone"],
 				"waiting_room": row_data["waiting_room"],
 				"psos": row_data["psos"],
 				"premium_stop": row_data["premium_stop"],
@@ -73,7 +73,7 @@ function get_safety_index(stop_id) {
 
 function get_walking_index(fromLat, fromLon, toLat, toLon) {
 	return {
-		"s_index": Math.floor(Math.random() * 10) + 1,
+		"s_index": Math.random(),
 		"meta": null
 	};
 }
@@ -98,14 +98,14 @@ app.post('/route', async (req, res) => {
 	}};
 
 	fetch(`http://${process.env.ROUTE_API}/otp/routers/default/plan?fromPlace=${fromLat},${fromLon}&toPlace=${toLat},${toLon}&mode=TRANSIT,WALK&maxWalkDistance=1500&arriveBy=false`, params).then(data => data.json()).then(response => {
-		const routes = response["plan"]["itineraries"];
+		let routes = response["plan"]["itineraries"];
 		const promises_waiting = [];
 		routes.forEach(route => {
 			const legs = route["legs"];
 			legs.forEach(leg => {
 				if (leg["MODE"] != 'WALK') {
 					try {
-						promises_waiting.push(get_safety_index(leg["from"]["stopId"].split(":")[1]));
+						promises_waiting.push(get_safety_index(leg["to"]["stopId"].split(":")[1]));
 					} catch (_) {
 						promises_waiting.push(get_walking_index(leg["from"]["lat"], leg["from"]["lon"], leg["to"]["lat"], leg["to"]["lon"]));
 					}
@@ -121,11 +121,11 @@ app.post('/route', async (req, res) => {
 					routes[i]["legs"][j]["safety"] = resolved[counter++];
 				}
 			}
+			res.json({"routes": routes});
 		}).catch(_ => {
 			console.log("Failed to add safety data to route");
 			res.json({"routes": routes});
 		});
-		res.json({"routes": routes});
 	}).catch(err => {
 		console.log(err);
 		res.status(500).send(`Failed to get route data, or no route options: ${JSON.stringify(err)}`);
