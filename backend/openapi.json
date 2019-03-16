@@ -29,7 +29,7 @@
                 "operationId": "",
                 "responses": {
                     "default": {
-                        "description": "Default response"
+                        "description": "Example Response"
                     }
                 },
                 "requestBody": {
@@ -38,12 +38,12 @@
                             "required": false,
                             "schema": {
                                 "start": {
-                                    "\"lat\"": "latitude",
-                                    "\"lon\"": "longitude"
+                                    "lat": "latitude",
+                                    "lon": "longitude"
                                 },
                                 "destination": {
-                                    "\"lat\"": "latitude",
-                                    "\"lon\"": "longitude"
+                                    "lat": "latitude",
+                                    "lon": "longitude"
                                 }
                             }
                         }
@@ -74,7 +74,27 @@
                         "description": "An example response",
                         "content": {
                             "application/json": {
-                                "schema": {}
+                                "schema": {
+                                    "safety": {
+                                        "s_index": {
+                                            "safety_index": "\"0.30\""
+                                        }
+                                    },
+                                    "meta": {
+                                        "cctv": false,
+                                        "toilet": true,
+                                        "pay_phone": false,
+                                        "indoor_waiting_area": true,
+                                        "sheltered_waiting_area": false,
+                                        "taxi_rank": false,
+                                        "lighting": true,
+                                        "waiting_room": true,
+                                        "psos": true,
+                                        "premium_stop": false,
+                                        "travellers_aid": false,
+                                        "kiosk": false
+                                    }
+                                }
                             }
                         }
                     }

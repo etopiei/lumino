@@ -1,0 +1,4 @@
+DELETE FROM stop_facilities WHERE stop_facilities.stopid NOT IN 
+(SELECT stopid FROM (
+    SELECT DISTINCT ON stopid *
+  FROM people));
