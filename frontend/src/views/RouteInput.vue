@@ -74,7 +74,6 @@
                 v-if="!!start && !!destination"
                 >OK. Let's Go</v-btn>
               </v-fade-transition>
-              {{ routeDetails }}
             </v-flex>
 
           </v-layout>
