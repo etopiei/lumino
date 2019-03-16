@@ -2,10 +2,10 @@
   <v-container fluid class="routeview" fill-height>
     <!-- {{ $route.params }} -->
     <v-layout row wrap>
-      <v-flex xs12 sm6 >
+      <v-flex xs12 sm3 >
         <RouteDetails v-bind:routeObject="routeObject"/>
       </v-flex>
-      <v-flex xs12 sm6 v-bind:style="{ order: $vuetify.breakpoint.smAndUp ? 1 : -1 }">
+      <v-flex xs12 sm9 v-bind:style="{ order: $vuetify.breakpoint.smAndUp ? 1 : -1 }">
         <MapView v-bind:routeObject="routeObject"/>
       </v-flex>
     </v-layout>
