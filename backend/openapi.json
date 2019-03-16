@@ -22,7 +22,7 @@
     "tags": [],
     "paths": {
         "/route": {
-            "get": {
+            "post": {
                 "summary": "Returns a route with safety information from a starting and finishing location.",
                 "description": "This method will return a JSON object to the client describing the route, as well as the relevant safety information for each stop on the journey.",
                 "parameters": [],
