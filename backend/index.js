@@ -1,13 +1,13 @@
 require('dotenv').config();
 const express = require('express');
-const expressOasGenerator = require('express-oas-generator');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./openapi.json');
 const fs = require('fs');
 const fetch = require('node-fetch');
 const path = require('path');
 const bodyParser = require('body-parser');
 
 const app = express();
-expressOasGenerator.init(app, {});
 const port = 3000;
 
 // the details to access the database will come from environment variables
@@ -16,6 +16,11 @@ const client = new Client({host: process.env.DB});
 client.connect();
 
 app.use(bodyParser.json());
+
+var options = {
+	customCss: '.swagger-ui .topbar { display: none }'
+};
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
 
 function get_station_metadata(station_id) {
 	// here fetch metadata from station file
@@ -33,9 +38,8 @@ function get_station_metadata(station_id) {
 			"lighting": file_data["accessibility"]["lighting"],
 			"phone": file_data["contact"]["phone"]
 		};
-	} catch (e) {
+	} catch (_) {
 		console.log("Error reading file");
-		console.log(e);
 		return {};
 	}
 }
