@@ -1,4 +1,6 @@
 *.DS_Store
-data/output/*
+data/output/*.json
+data/output.zip
+*/node_modules/*
 
 node_modules/
