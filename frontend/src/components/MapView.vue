@@ -15,10 +15,31 @@
 
 <script>
 
+  const greenColour = '#47AB6C'
+  const orangeColour = '#F2B134'
+  const redColour = '#ED553B'
+
+  function drawRoute(route, featureGroup){
+    var legs = route.legs
+    var coordinates = new Array(legs.length * 2)
+    for(var i = 0; i < legs.length; i++){
+      var latStart = legs[i].from.lat
+      var lonStart = legs[i].from.lon
+      coordinates[i*2] = [latStart, lonStart]
+      var latEnd = legs[i].to.lat
+      var lonEnd = legs[i].to.lon
+      coordinates[i*2 + 1] = [latStart, lonStart]
+    }
+
+    drawPolyline(coordinates, greenColour, featureGroup)
+
+    console.log(coordinates)
+  }
+
   // This function draws a route
-  function drawRoute(latlongArray, colour, featureGroup){
+  function drawPolyline(latlongArray, colour, featureGroup){
     var polyline_options = {
-    color: '#000'
+    color: colour
   }
     var polyline = L.polyline(latlongArray, polyline_options).addTo(featureGroup);
   }
@@ -43,7 +64,7 @@ function clearRoutes(featureGroup){
 
       // route details stored in this.routeObject
 
-      console.log("Loading map with route:", this.routeObject, this.map)
+      console.log("Loading map with route:", this.routeObject.routes, this.map)
 
       this.map = L.mapbox.map('map');
       this.map.setView([-37.818437, 144.967198], 13)
@@ -51,13 +72,12 @@ function clearRoutes(featureGroup){
       
       var featureGroup = L.featureGroup().addTo(this.map);
 
-      var line_points = [
-    [-37.817442, 144.968762],
-    [-37.825849, 144.997962],
-    [-37.846998, 144.990061]
-];
-    drawRoute(line_points, '#000', featureGroup);
-    clearRoutes(featureGroup);
+      if(this.routeObject.routes){
+        for(var i = 0; i < this.routeObject.routes.length; i++){
+        drawRoute(this.routeObject.routes[i], featureGroup)
+      }
+      }
+      
   }
   }
 </script>

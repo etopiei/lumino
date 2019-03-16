@@ -66,7 +66,7 @@ export default {
 
     axios.post('http://10.77.3.7:3000/route', requestBody)
     .then( response => {
-      this.routeObject = response;
+      this.routeObject = response.data;
     })
   }
 
