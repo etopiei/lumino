@@ -15,12 +15,26 @@
 
 <script>
 
+  const polyline = require('@mapbox/polyline');
+
+  function arraysEqual(arr1, arr2) {
+      if(arr1.length !== arr2.length)
+          return false;
+      for(var i = arr1.length; i--;) {
+          if(arr1[i] !== arr2[i])
+              return false;
+      }
+
+      return true;
+  }
+
   // This function draws a route
   function drawRoute(latlongArray, colour, featureGroup){
-    var polyline_options = {
-    color: '#000'
-  }
-    var polyline = L.polyline(latlongArray, polyline_options).addTo(featureGroup);
+    console.log(latlongArray)
+    var polyline_options = {color: colour};
+    var polyline = L.polyline(latlongArray, polyline_options).addTo(featureGroup).on('click', (e) => {
+      console.log("Clicked", this);
+    }, featureGroup);
   }
 
 // This function clears the routes
@@ -43,21 +57,30 @@ function clearRoutes(featureGroup){
 
       // route details stored in this.routeObject
 
-      console.log("Loading map with route:", this.routeObject, this.map)
+      console.log("Loading map with route:", this.routeObject.data.routes, this.map)
 
       this.map = L.mapbox.map('map');
       this.map.setView([-37.818437, 144.967198], 13)
       .addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/streets-v11'));
-      
-      var featureGroup = L.featureGroup().addTo(this.map);
 
-      var line_points = [
-    [-37.817442, 144.968762],
-    [-37.825849, 144.997962],
-    [-37.846998, 144.990061]
-];
-    drawRoute(line_points, '#000', featureGroup);
-    clearRoutes(featureGroup);
+      let selected = true;
+      let other_routes = [];
+      let first = true;
+      var featureGroup = L.featureGroup().addTo(this.map);
+      this.routeObject.data.routes.forEach(route => {
+        let points = [];
+        let colour = "#c2c2c2";
+        route.legs.forEach(leg => {
+          points = points.concat(polyline.decode(leg.legGeometry.points));
+          if (selected) {
+            colour = 'red';
+            selected = false;
+          }
+          });
+          drawRoute(points, colour, featureGroup);
+      });
+
+    // clearRoutes(featureGroup);
   }
   }
 </script>

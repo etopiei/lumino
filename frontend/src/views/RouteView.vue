@@ -5,7 +5,7 @@
       <v-flex xs12 sm3 >
         <RouteDetails v-bind:routeObject="routeObject"/>
       </v-flex>
-      <v-flex xs12 sm9 v-bind:style="{ order: $vuetify.breakpoint.smAndUp ? 1 : -1 }">
+      <v-flex v-if=routeObject != null xs12 sm9 v-bind:style="{ order: $vuetify.breakpoint.smAndUp ? 1 : -1 }">
         <MapView v-bind:routeObject="routeObject"/>
       </v-flex>
     </v-layout>
@@ -38,7 +38,7 @@ export default {
   },
   data () {
     return {
-      routeObject: 'test'
+      routeObject: null
     }
   },
   computed: {
@@ -65,7 +65,7 @@ export default {
     }
 
     axios.post('http://10.77.3.7:3000/route', requestBody)
-    .then( response => {
+    .then(response => {
       this.routeObject = response;
     })
   }
