@@ -2,8 +2,8 @@
   <v-container fluid class="routeview" fill-height>
     <!-- {{ $route.params }} -->
     <v-layout row wrap>
-      <v-flex xs12 sm6 >
-        <RouteDetails v-bind:routeObject="routeObject"/>
+      <v-flex xs12 sm6>
+        <RouteDetails v-if="!!routeObject" v-bind:routeObject="routeObject"/>
       </v-flex>
       <v-flex xs12 sm6 v-bind:style="{ order: $vuetify.breakpoint.smAndUp ? 1 : -1 }">
         <MapView v-bind:routeObject="routeObject"/>
@@ -16,6 +16,8 @@
 
 .routeview {
   // background: #f5f5f5;
+  padding: 0px;
+  background:white;
 }
 
 </style>
@@ -38,7 +40,7 @@ export default {
   },
   data () {
     return {
-      routeObject: 'test'
+      routeObject: null
     }
   },
   computed: {
@@ -52,7 +54,7 @@ export default {
   watch: {
     
   },
-  mounted() {
+  created() {
     const requestBody = {
       start: {
         lat: this.start[0],
@@ -64,9 +66,14 @@ export default {
       }
     }
 
+   
     axios.post('http://10.77.3.7:3000/route', requestBody)
     .then( response => {
-      this.routeObject = response;
+        this.routeObject = response.data
+        console.log("Retrieved routeObject")
+    })
+    .catch( error => {
+      console.error(error)
     })
   }
 
