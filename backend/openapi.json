@@ -1,0 +1,124 @@
+{
+    "openapi": "3.0.0",
+    "servers": [
+        {
+            "url": "http://10.77.3.7:3000/",
+            "description": "Main Endpoint"
+        }
+    ],
+    "info": {
+        "description": "This is an API to get PTV data, particularly related to safety. Used as a back-end for Lumino.",
+        "version": "1.0.0",
+        "title": "Lumino API",
+        "termsOfService": "",
+        "contact": {
+            "email": ""
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "tags": [],
+    "paths": {
+        "/route": {
+            "post": {
+                "summary": "Returns a route with safety information from a starting and finishing location.",
+                "description": "This method will return a JSON object to the client describing the route, as well as the relevant safety information for each stop on the journey.",
+                "parameters": [],
+                "operationId": "",
+                "responses": {
+                    "default": {
+                        "description": "Default response"
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "*/*": {
+                            "required": false,
+                            "schema": {
+                                "start": {
+                                    "\"lat\"": "latitude",
+                                    "\"lon\"": "longitude"
+                                },
+                                "destination": {
+                                    "\"lat\"": "latitude",
+                                    "\"lon\"": "longitude"
+                                }
+                            }
+                        }
+                    },
+                    "required": true,
+                    "description": "{\n    \"start\": {\"lat\": latitude, \"lon\": longitude},\n    \"destination\": {\"lat\": latitude, \"lon\": longitude}\n}"
+                }
+            }
+        },
+        "/safety": {
+            "get": {
+                "summary": "Get the safety information for a particular PTV stop.",
+                "description": "This will fetch the safety information about a particular station.",
+                "parameters": [
+                    {
+                        "name": "stopid",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "This is the ID of a stop on the PTV network to get the safety information about."
+                    }
+                ],
+                "operationId": "",
+                "responses": {
+                    "200": {
+                        "description": "An example response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {},
+        "requestBodies": {
+            "Pet": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Pet"
+                        }
+                    },
+                    "application/xml": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Pet"
+                        }
+                    }
+                },
+                "description": "Pet object that needs to be added to the store",
+                "required": true
+            },
+            "UserArray": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    }
+                },
+                "description": "List of user object",
+                "required": true
+            }
+        },
+        "securitySchemes": {},
+        "links": {},
+        "callbacks": {}
+    },
+    "security": []
+}
