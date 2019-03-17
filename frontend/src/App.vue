@@ -1,9 +1,11 @@
 <template>
   <v-app >
-    <v-toolbar app flat>
-      <v-toolbar-title class="catamaran brand text-lowercase" >
-        lumino.
-      </v-toolbar-title>
+    <v-toolbar app flat v-bind:class=" { purple: shouldBePurple }">
+      <router-link to="/">
+        <v-toolbar-title class="catamaran brand text-lowercase">
+          lumino.
+        </v-toolbar-title>
+      </router-link>
 
       <v-spacer></v-spacer>
 
@@ -32,6 +34,18 @@
   }
 }
 
+.purple {
+  background-image: linear-gradient(135deg,#7753eb,#4264fb);
+  div, span {
+    color:white;
+  }
+}
+
+a {
+  text-decoration: none;
+  color:none;
+}
+
 
 </style>
 
@@ -41,6 +55,11 @@ export default {
   name: 'App',
   components: {
     
+  },
+  computed: {
+    shouldBePurple() {
+      return this.$route.path !== '/';
+    }
   },
   data () {
     return {

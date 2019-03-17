@@ -19,9 +19,8 @@
 <style scoped lang="scss">
 
 .routeview {
-  // background: #f5f5f5;
   padding: 0px;
-  background:white;
+  color:white;
 }
 
 .routeSelector {

@@ -70,7 +70,7 @@
 
             <v-flex xs12 text-xs-center style="min-height:50px;">
               <v-fade-transition>
-                <v-btn flat class="link" color="accent" :to="routeDetails"
+                <v-btn flat class="link" color="white" :to="routeDetails"
                 v-if="!!start && !!destination"
                 >OK. Let's Go</v-btn>
               </v-fade-transition>
@@ -89,6 +89,7 @@
 
 .routeinput {
   background-image: linear-gradient(135deg,#7753eb,#4264fb);
+  color:white;
 }
 
 h1, .link {

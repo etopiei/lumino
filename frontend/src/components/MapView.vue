@@ -32,7 +32,7 @@ function clearRoutes(featureGroup){
 function make_everything_happen(route, map, featureGroup) {
   clearRoutes(featureGroup);
   map.setView([-37.818437, 144.967198], 13)
-  .addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/streets-v11'));
+  .addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/dark-v9'));
   let selected = true;
   let old_total = null;
   let first = true;
@@ -41,7 +41,7 @@ function make_everything_happen(route, map, featureGroup) {
   route.legs.forEach(leg => {
     const extra_points = polyline.decode(leg.legGeometry.points);
     points = points.concat(extra_points);
-    drawRoute(points, 'red', featureGroup);
+    drawRoute(points, '#4264fb', featureGroup);
   });
 }
 
@@ -69,6 +69,7 @@ function make_everything_happen(route, map, featureGroup) {
       // This function is called once the component is ready
       // Set up map, draw etc
       this.map = L.mapbox.map('map');
+
       this.featureGroup = L.featureGroup().addTo(this.map);
       console.log("Loading map with route:", this.routeObject, this.map)
       make_everything_happen(this.routeObject.routes[0], this.map, this.featureGroup);

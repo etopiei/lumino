@@ -10,7 +10,7 @@
 					<v-list-tile-title class="stoptitle">{{ stop.name }} </v-list-tile-title>
 				</v-list-tile-content>
 
-				<v-list-tile-avatar class="score" v-bind:class="{ low: stop.safety.index < 40, high: stop.safety.index > 60 }">
+				<v-list-tile-avatar class="score" v-bind:class="{ low: stop.safety.index < 50, high: stop.safety.index > 70 }">
 					{{ stop.safety.index }}
 				</v-list-tile-avatar>
 			</v-list-tile>
@@ -47,13 +47,13 @@
 					CCTV
 				</v-list-tile-content>
 			</v-list-tile>
-			<v-list-tile class="stopdetail" v-if="stop.safety.high_crime">
+			<v-list-tile class="stopdetail" v-if="stop.safety.details.high_crime">
 				<v-list-tile-action>
 				</v-list-tile-action>
 
 				<v-icon class="icon">close</v-icon>
 				<v-list-tile-content class="text">
-					High crime area
+					Higher crime area
 				</v-list-tile-content>
 			</v-list-tile>
 		</v-list>
@@ -86,6 +86,7 @@
 }
 .score {
 	font-size: 1em;
+	color:#9e9e9e;
 }
 .score.low {
 	color: red;
@@ -114,7 +115,7 @@
    
     },
     mounted() {
-
+    	console.log('stop', this.stop)
     }
   }
 </script>

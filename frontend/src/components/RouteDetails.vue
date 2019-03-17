@@ -96,12 +96,12 @@ import StopCard from '@/components/StopCard.vue'
       },
       buildStops() {
         const route = this.routeObject.routes[this.selectedRoute];
-        console.log(route);
+        console.log(route.legs);
 
         let startTime = route.startTime;
         let d = new Date(0); // The 0 there is the key, which sets the date to the epoch
         d.setUTCMilliseconds(startTime);
-        this.routeStartTime = d.getHours() + ":" + d.getMinutes()
+        this.routeStartTime = (d.getHours() < 10 ? '0' + d.getHours() : d.getHours()) + ":" + (d.getMinutes() < 10 ? '0' + d.getMinutes() : d.getMinutes())
         this.routeDuration = Math.floor(route.duration / 60);
 
 
@@ -132,8 +132,10 @@ import StopCard from '@/components/StopCard.vue'
               details = {
                 lighting: safety.meta ? safety.meta.lighting : null,
                 cctv: safety.meta ? safety.meta.cctv : null,
-                psos: safety.meta ? safety.meta.psos : null
+                psos: safety.meta ? safety.meta.psos : null,
+                high_crime: safety.crime.crime_level === "High"
               }
+              console.log(details, safety.crime)
             }
 
 
@@ -144,7 +146,7 @@ import StopCard from '@/components/StopCard.vue'
               icon_color: 'primary',
               type: end.vertexType,
               safety: {
-                index: safety ? Math.round(safety.s_index.safety_index * 100) : null,
+                index: safety ? (100 - Math.round(safety.s_index.safety_index * 100)) : null,
                 high_crime: false,
                 details: details
               }
