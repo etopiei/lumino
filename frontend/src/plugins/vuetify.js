@@ -8,6 +8,6 @@ Vue.use(Vuetify, {
   theme: {
     primary: colors.red.darken1, // #E53935
     secondary: colors.blue.darken1, // #FFCDD2
-    accent: colors.indigo.base // #3F51B5
+    accent: '#4264fb'
   }
 })
