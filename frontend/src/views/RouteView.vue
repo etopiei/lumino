@@ -1,12 +1,16 @@
 <template>
   <v-container fluid class="routeview" fill-height>
     <!-- {{ $route.params }} -->
-    <v-layout row wrap>
-      <v-flex xs12 sm3 >
-        <RouteDetails v-bind:routeObject="routeObject"/>
+    <v-layout row wrap v-if="routeObject" justify-center style="overflow:hidden;">
+      <v-flex xs12 sm6 justify-center>
+        <v-radio-group v-model="selectedRoute" row class="routeSelector">
+          <v-radio :label=" 'Route ' + (index+1) " :value="index" 
+            v-for="(_, index) in routeObject.routes"></v-radio>
+        </v-radio-group>
+        <RouteDetails v-if="!!routeObject" v-bind:routeObject="routeObject" ref="routeDetails"/>
       </v-flex>
-      <v-flex v-if=routeObject != null xs12 sm9 v-bind:style="{ order: $vuetify.breakpoint.smAndUp ? 1 : -1 }">
-        <MapView v-bind:routeObject="routeObject"/>
+      <v-flex xs12 sm6 v-bind:style="{ order: $vuetify.breakpoint.smAndUp ? 1 : -1 }">
+        <MapView v-bind:routeObject="routeObject" ref="mapView" />
       </v-flex>
     </v-layout>
   </v-container>
@@ -15,7 +19,12 @@
 <style scoped lang="scss">
 
 .routeview {
-  // background: #f5f5f5;
+  padding: 0px;
+  color:white;
+}
+
+.routeSelector {
+  padding-left: 20px;
 }
 
 </style>
@@ -38,7 +47,8 @@ export default {
   },
   data () {
     return {
-      routeObject: null
+      routeObject: null,
+      selectedRoute: 0
     }
   },
   computed: {
@@ -50,9 +60,12 @@ export default {
     }
   },
   watch: {
-    
+    selectedRoute(val) {
+      this.$refs.routeDetails.updateSelection(val);
+      this.$refs.mapView.update_data(val);
+    }
   },
-  mounted() {
+  created() {
     const requestBody = {
       start: {
         lat: this.start[0],
@@ -64,9 +77,14 @@ export default {
       }
     }
 
+   
     axios.post('http://10.77.3.7:3000/route', requestBody)
-    .then(response => {
-      this.routeObject = response;
+    .then( response => {
+        this.routeObject = response.data;
+        console.log("Retrieved routeObject")
+    })
+    .catch( error => {
+      console.error(error)
     })
   }
 
