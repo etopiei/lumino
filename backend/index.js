@@ -1,28 +1,21 @@
 require('dotenv').config();
 const express = require('express');
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./openapi.json');
+const expressOasGenerator = require('express-oas-generator');
+const fs = require('fs');
 const fetch = require('node-fetch');
+const path = require('path');
 const bodyParser = require('body-parser');
-const cors = require('cors');
-const Sequelize = require('sequelize');
 
 const app = express();
+expressOasGenerator.init(app, {});
 const port = 3000;
 
 // the details to access the database will come from environment variables
-const sequelize = new Sequelize('postgres', 'postgres', process.env.PGPASSWORD, {
-	host: process.env.DB,
-	dialect: "postgres"
-})
+const { Client } = require('pg');
+const client = new Client({host: process.env.DB});
+client.connect();
 
-app.use(cors());
 app.use(bodyParser.json());
-
-var options = {
-	customCss: '.swagger-ui .topbar { display: none }'
-};
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
 
 function get_station_metadata(station_id) {
 	const p = [];
@@ -57,32 +50,19 @@ function get_safety_index(stop_id) {
 			"meta": resolved[0],
 			"crime": resolved[2]
 		};
-	}).catch(err => {
-		console.log(err);
-		return null;
 	});
 }
 
 function get_walking_index(fromLat, fromLon, toLat, toLon) {
 	return {
-		"s_index": Math.random(),
+		"s_index": Math.floor(Math.random() * 10) + 1,
 		"meta": null
 	};
 }
 
-app.get('/crime', (req, res) => {
-	const stop = req.query.stopid;
-	get_crime_level(stop).then(crime_text => {
-		if (crime_text !== null) {
-			res.send(crime_text);
-		} else {
-			res.status(404).send("Could not find crime data from this stop id");
-		}
-	});
-});
-
 app.get('/safety', (req, res) => {
 	const stop = req.query.stopid;
+	console.log(stop);
 	get_safety_index(stop).then(safety_data => {
 		res.json({"safety": safety_data});
 	}).catch(err => {
@@ -90,7 +70,7 @@ app.get('/safety', (req, res) => {
 	});
 });
 
-app.post('/route', async (req, res) => {
+app.get('/route', async (req, res) => {
 	const fromLat = req.body.start.lat;
 	const fromLon = req.body.start.lon;
 	const toLat = req.body.destination.lat;
@@ -99,39 +79,28 @@ app.post('/route', async (req, res) => {
 	const params = {"method": "GET", "headers": {
 		"Accept": "application/json"
 	}};
-
-	fetch(`http://${process.env.ROUTE_API}/otp/routers/default/plan?fromPlace=${fromLat},${fromLon}&toPlace=${toLat},${toLon}&mode=TRANSIT,WALK&maxWalkDistance=1500&arriveBy=false`, params).then(data => data.json()).then(response => {
-		let routes = response["plan"]["itineraries"];
+	fetch(`http://${process.env.ROUTE_API}/otp/routers/default/plan?fromPlace=${fromLat},${fromLon}&toPlace=${toLat},${toLon}&mode=TRANSIT,WALK&maxWalkDistance=500&arriveBy=false`, params).then(data => data.json()).then(response => {
+		const routes = response["plan"]["itineraries"];
 		const promises_waiting = [];
 		routes.forEach(route => {
 			const legs = route["legs"];
 			legs.forEach(leg => {
-				if (leg["MODE"] != 'WALK') {
-					try {
-						promises_waiting.push(get_safety_index(leg["to"]["stopId"].split(":")[1]));
-					} catch (_) {
-						promises_waiting.push(get_walking_index(leg["from"]["lat"], leg["from"]["lon"], leg["to"]["lat"], leg["to"]["lon"]));
-					}
+				if (leg["MODE"] != "WALK") {
+					promises_waiting.push(get_safety_index(leg["from"]["stopId"].split(":")[1]));
 				} else {
 					promises_waiting.push(get_walking_index(leg["from"]["lat"], leg["from"]["lon"], leg["to"]["lat"], leg["to"]["lon"]));
 				}
 			});
 		});
-		Promise.all(promises_waiting).then(resolved => {
-			let counter = 0;
-			for(let i = 0; i < routes.length; i++) {
-				for(let j = 0; j < routes[i]["legs"].length; j++) {
-					routes[i]["legs"][j]["safety"] = resolved[counter++];
-				}
-			}
-			res.json({"routes": routes});
-		}).catch(_ => {
-			console.log("Failed to add safety data to route");
-			res.json({"routes": routes});
+		Promises.all(promises_waiting).then(resolved => {
+			res.json({"routes": routes, "safety": resolved});
+		}).catch(err => {
+			// If this happens, make sure the route is still sent
+			console.log(err);
+			res.json({"routes": routes, "safety": null});
 		});
 	}).catch(err => {
-		console.log(err);
-		res.status(500).send(`Failed to get route data, or no route options: ${JSON.stringify(err)}`);
+		res.status(500).send(`Failed to get route data: ${JSON.stringify(err)}`);
 	});
 });
 
