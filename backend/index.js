@@ -29,26 +29,7 @@ function get_station_metadata(station_id) {
 	p.push(sequelize.query('SELECT * FROM stop_facilities WHERE stopid = ? LIMIT 1', {replacements: [station_id]}));
 	return Promise.all(p).then(result => {
 		const row_data = result[0][0][0];
-		try {
-			return {
-				"cctv": row_data["cctv"],
-				"toilet": row_data["toilet"],
-				"pay_phone": row_data["pay_phone"],
-				"indoor_waiting_area": row_data["indoor_waiting_area"],
-				"sheltered_waiting_area": row_data["sheltered_waiting_area"],
-				"taxi_rank": row_data["taxi_rank"],
-				"lighting": row_data["lighting"],
-				"phone": row_data["telephone"],
-				"waiting_room": row_data["waiting_room"],
-				"psos": row_data["psos"],
-				"premium_stop": row_data["premium_stop"],
-				"travellers_aid": row_data["travellers_aid"],
-				"kiosk": row_data["kiosk"]
-			};
-		} catch (e) {
-			console.log("Failed to add data");
-			return null;
-		}
+		return row_data;
 	}).catch(err => {
 		// stopid probably doesn't exist
 		console.log(err);
@@ -69,10 +50,12 @@ function get_safety_index(stop_id) {
 	const p = [];
 	p.push(get_station_metadata(stop_id));
 	p.push(sequelize.query('SELECT safety_index(?)', {replacements: [stop_id]}));
+	p.push(get_crime_level(stop_id));
 	return Promise.all(p).then(resolved => {
 		return {
 			"s_index": resolved[1][0][0],
-			"meta": resolved[0]
+			"meta": resolved[0],
+			"crime": resolved[2]
 		};
 	}).catch(err => {
 		console.log(err);
@@ -146,7 +129,6 @@ app.post('/route', async (req, res) => {
 			console.log("Failed to add safety data to route");
 			res.json({"routes": routes});
 		});
-		res.json({"routes": routes});
 	}).catch(err => {
 		console.log(err);
 		res.status(500).send(`Failed to get route data, or no route options: ${JSON.stringify(err)}`);
