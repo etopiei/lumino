@@ -2,7 +2,7 @@
   <v-container fluid class="home" text-xs-center grid-list-xl>   
 
     <v-layout row justify-center>
-      <v-flex xs6>
+      <v-flex xs11 md6>
         <h1 class="brand display-3">lumino.</h1>
         <span class="subheading">Coming to Melbourne very soon!</span>
         <v-form>
@@ -19,7 +19,7 @@
 
     <v-layout row wrap justify-center>
 
-      <v-flex xs8>
+      <v-flex xs11 md8>
 
         <v-sheet
           class="d-flex sheet"
@@ -28,14 +28,14 @@
           <v-layout wrap>
             <v-flex xs12>
               <h6 class="title">Do you feel unsafe on public transport?</h6>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum maiores modi quidem veniam, expedita quis laboriosam, ullam facere adipisci, iusto, voluptate sapiente corrupti asperiores rem nemo numquam fuga ab at.</p>
+              <p>Whether you are on your daily commute to work or coming home after a late night, we all feel uncomfortable on public transport sometimes. We aim to inform you about the safety features of your public transport route so you can make the best decisions when commuting.</p>
             </v-flex>
           </v-layout>
         </v-sheet>
 
       </v-flex>
 
-      <v-flex xs8>
+      <v-flex xs11 md8>
 
         <v-sheet
           class="d-flex sheet"
@@ -44,14 +44,14 @@
           <v-layout wrap>
             <v-flex xs12>
               <h6 class="title">How does it work?</h6>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum maiores modi quidem veniam, expedita quis laboriosam, ullam facere adipisci, iusto, voluptate sapiente corrupti asperiores rem nemo numquam fuga ab at.</p>
+              <p>We collected safety information from various data sources such as crime statistics, lighting, cctv, and protective staff locations from Victorian Police and PTV. We used this information to evaluate each bus stop and train station in the victorian public transport network. All of this information is accessible for free through our web application and our public API.</p>
             </v-flex>
           </v-layout>
         </v-sheet>
 
       </v-flex>
 
-      <v-flex xs8>
+      <v-flex xs11 md8>
 
         <v-sheet
           class="d-flex sheet"
