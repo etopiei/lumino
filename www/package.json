@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "deploy": "gsutil rsync -R dist gs://www.nazaire.dev"
+    "deploy": "gsutil rsync -R dist"
   },
   "dependencies": {
     "vue": "^2.6.6",
